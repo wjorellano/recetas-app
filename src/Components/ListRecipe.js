@@ -6,6 +6,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { firebaseConfig } from "../../firebaseConfig";
 
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
@@ -20,7 +21,9 @@ const ListRecipe = (props) => {
 
    const user = auth.currentUser;
    const userId = user.uid;
-   console.log(userId);
+   // console.log(userId);
+
+   
 
    useEffect(() => {
       fetch(`${BASE_URL}/recipes/user/${userId}`, {
@@ -39,24 +42,41 @@ const ListRecipe = (props) => {
       .catch(error => console.log(error))
    }, []);
 
+   useEffect(() => {
+      const unsubscribe = props.navigation.addListener('focus', () => {
+         fetch(`${BASE_URL}/recipes/user/${userId}`, {
+            method: 'GET',
+            headers: {
+               'Content-Type': 'application/json',
+               'Accept': 'application/json'
+            }
+         })
+         .then(response => response.json())
+         .then(data => {
+            setRecipes(data);
+            setLoading(false);
+            // console.log(data);
+         })
+         .catch(error => console.log(error))
+      });
+      return unsubscribe;
+   }, [props.navigation]);
+   
    return(
       <SafeAreaView>
-
-      {loading ? <Loader /> : (
-         <ScrollView style={{ padding: SPACING * 2 }}>
+      { loading ? (
+         <Loader />
+      ) : (
+         <ScrollView style={{ padding: SPACING * 2, height:740 }}>
             {recipes.map((recipe) => {
                return(
-                  <View key={recipe.id} 
-                     style={{
+                  <View key={recipe.id} style={{
                         flexDirection: "row",
                         flexWrap: "wrap",
                         justifyContent: "space-between",
                         paddingHorizontal: SPACING,
                         paddingVertical: SPACING * 2,
-                        marginTop: 5,
-                        
-                        
-                     }}>
+                        marginTop: 5 }}>
                   <TouchableOpacity
                      style={{ borderRadius: SPACING * 2, marginBottom: SPACING * 2}}
                      key={recipe.id}
@@ -65,30 +85,24 @@ const ListRecipe = (props) => {
                            recipeId: recipe.id
                         })
                      }}>
-                     <Image
-                        source={{uri: recipe.image}}
-                        style={{
+                     <Image source={{ uri: recipe.image }} style={{
                            borderWidth: 1,
                            width: 360,
                            height: ITEM_WIDTH + SPACING * 3,
-                           borderRadius: SPACING * 2,
-                        }}
-                     />
-                     <Text
-                        style={{
+                           borderRadius: SPACING * 1,
+                        }}/>
+                     <Text style={{
                            padding: SPACING,
                            fontSize: SPACING * 2,
                            fontWeight: "700",
                            marginTop: SPACING,
                         }}>{recipe.dish}</Text>
-                     <Text
-                        style={{
+                     <Text style={{
                            padding: SPACING,
                            fontSize: SPACING * 1.5,
                            color: "#a9a9a9",
                            marginVertical: SPACING / 2,
-                        }}>{recipe.spice}</Text>
-                     {/* <Text>{recipe.spice}</Text> */}
+                        }}>{recipe.description}</Text>
                      </TouchableOpacity>
                   </View>
                )
@@ -97,37 +111,6 @@ const ListRecipe = (props) => {
       )}
       </SafeAreaView>
    )
-//    return(
-//       <View>
-//       {loading ? <Loader /> : (
-//          <FlatList
-//             data={recipes}
-//             keyExtractor={(item) => item.id.toString()}
-//             renderItem={item => displayRecipe(item, props)}
-//          />
-//       )}
-//       </View>
-
-//    )
-// }
-
-// const displayRecipe = ({item}, props) => {
-//    return(
-//       <TouchableOpacity
-//          onPress={() => {
-//             props.navigation.navigate('RecipeDetail', {
-//                recipeId: item.id
-//             })
-//          }}>
-//          <Image
-//             source={{uri: item.image}}
-//             style={{width: 100, height: 100}}
-//          />
-//          <Text>{item.title}</Text>
-//          <Text>{item.ingredients}</Text>
-//       </TouchableOpacity>
-//    )
-// }
 }
 
 export default ListRecipe;

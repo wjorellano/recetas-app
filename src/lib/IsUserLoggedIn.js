@@ -13,8 +13,7 @@ export const IsUserLoggedIn = () => {
       onAuthStateChanged(auth, (user) => {
          if (user) {
             setUserLoggedIn(true);
-            //mostrar id de usuario
-            // console.log(user.uid);
+
          } else {
             setUserLoggedIn(false);
          }

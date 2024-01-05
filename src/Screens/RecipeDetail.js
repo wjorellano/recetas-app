@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, TouchableOpacity } from "react-native";
-// import Share from 'react-native-share';
+import { View, Text, Image, Share, TouchableOpacity } from "react-native";
 import {BASE_URL } from "../config"
-
+import Loader from "../Components/Loader";
 
 const RecipeDetailScreen = (props) => {
 
    const [recipe, setRecipe] = useState({});
+   const [loading, setLoading] = useState(true);
 
    const getRecipe = async () => {
       const response = await fetch(`${BASE_URL}/recipes/${props.route.params.recipeId}`,{
@@ -18,6 +18,7 @@ const RecipeDetailScreen = (props) => {
       });
       const data = await response.json();
       setRecipe(data);
+      setLoading(false);
    }
 
    useEffect(() => {
@@ -25,33 +26,30 @@ const RecipeDetailScreen = (props) => {
    }, []);
 
    // compartir receta con los demas usuarios
-   // const shareRecipe = async () => {
-   //    try {
-   //       const result = await Share.share({
-   //          message: `Check out this recipe: ${recipe.dish}`,
-   //          url: recipe.image,
-   //          title: 'Recipe'
-   //       }, {
-   //          dialogTitle: 'Share Recipe'
-   //       });
-   //       if (result.action === Share.sharedAction) {
-   //          if (result.activityType) {
-   //             // shared with activity type of result.activityType
-   //          } else {
-   //             // shared
-   //          }
-   //       } else if (result.action === Share.dismissedAction) {
-   //          // dismissed
-   //       }
-   //    } catch (error) {
-   //       alert(error.message);
-   //    }
-   // }
+      const shareRecipe = async () => {
+         try {
+            const result = await Share.share({
+               message: `Hey! I found this recipe on the app Recipe Book, check it out: ${recipe.dish}`,
+            });
+            if (result.action === Share.sharedAction) {
+               if (result.activityType) {
+                  // shared with activity type of result.activityType
+               } else {
+                  
+               }
+            } else if (result.action === Share.dismissedAction) {
+               // dismissed
+            }
+         } catch (error) {
+            alert(error.message);
+         }
+      }
 
    return (
       <View>
-         { 
-            recipe ? (
+         { loading ? (
+            <Loader />
+         ) : (
                <View>
                   <Image
                      style={{ width: "100%", height: 300, borderRadius: 1 }}
@@ -70,7 +68,7 @@ const RecipeDetailScreen = (props) => {
                      <Text style={{ fontSize: 18, fontWeight: "bold", marginTop:20 }}>Vegetables:</Text>
                      <Text>{recipe.vegetables}</Text>
                      <TouchableOpacity
-                        // onPress={shareRecipe}
+                        onPress={shareRecipe}
                         style={{
                            backgroundColor: "#FFD700",
                            width: "100%",
@@ -90,9 +88,7 @@ const RecipeDetailScreen = (props) => {
                      </TouchableOpacity>
                   </View>
                </View>
-            ) : (
-               <Text>loading...</Text>
-            )
+         )
          }
       </View>
    );

@@ -13,71 +13,75 @@ const CreateRecipeScreen = (props) => {
    const [dish, setDish] = useState('');
    const [description, setDescription] = useState('');
    const [fruit, setFruit] = useState('');
-   const [image, setImage] = useState('');
+   const [ingredient, setIngredient] = useState('');
    const [vegetables, setVegetables] = useState('');
+   const [spice, setSpice] = useState('');
+
 
 
    const user = auth.currentUser;
    const userId = user.uid;
 
-   const createRecipe = () => {
-      fetch(`${BASE_URL}/recipes`, {
-         method: 'POST',
-         headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-         },
-         body: JSON.stringify({
-            dish: dish,
-            description: description,
-            fruit: fruit,
-            image: image,
-            vegetables: vegetables,
-            user_id: userId
-         })
-      })
-      .then(response => response.json())
-      .then(data => {
-         console.log(data)
-         props.navigation.navigate('Recipe')
-      })
-      .catch(error => {
-         console.log(error)
-      })
+   const createRecipe = async () => {
+      if (dish === '' || description === '' || fruit === '' || vegetables === '' || ingredient === '' || spice === '') {
+         alert('Please fill all the fields');
+      } else {
+         try {
+            const response = await fetch(`${BASE_URL}/recipes`, {
+               method: 'POST',
+               headers: {
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json'
+               },
+               body: JSON.stringify({
+                  dish: dish,
+                  description: description,
+                  ingredient: ingredient,
+                  fruit: fruit,
+                  spice: spice,
+                  vegetables: vegetables,
+                  user_id: userId
+               })
+            });
+            const data = await response.json();
+            console.log(data);
+            props.navigation.navigate('Recipe');
+         } catch (error) {
+            console.log(error);
+         }
+      }
    }
 
    return (
-      <View style={{
-         marginTop: 50,
-         flex: 1,
-         alignItems: 'center'}}>
-         <Text style={{
-               fontSize: 32,
-               fontWeight: 'bold',
-               textAlign: 'center'
-            }}>Create Recipe</Text>
+      <View style={{ marginTop: 50, margin:20, flex: 1, alignItems: 'center'}}>
+         <Text style={{ fontSize: 32, fontWeight: 'bold', textAlign: 'center'}}>Create your recipe</Text>
          <Input
-            label="Dish"
+            label="Dish*"
             placeholder="Dish"
             name={dish}
             onChangeText={(text) => setDish(text)}/>
          <Input
-            label="Description"
+            label="Description*"
             placeholder="Description"
             name={description}
             onChangeText={(text) => setDescription(text)}/>
          <Input
-            label="Fruit"
+            label="Fruit*"
             placeholder="Fruit"
             name={fruit}
             onChangeText={(text) => setFruit(text)}/>
          <Input
-            label="Image"
-            placeholder="Image"
-            name={image}
-            onChangeText={(text) => setImage(text)}/>
+            label="Spice*"
+            placeholder="Spice"
+            name={spice}
+            onChangeText={(text) => setSpice(text)}/>
          <Input
-            label="Vegetables"
+            label="Ingredient*"
+            placeholder="Ingredient"
+            name={ingredient}
+            onChangeText={(text) => setIngredient(text)}/>
+         <Input
+            label="Vegetables*"
             placeholder="Vegetables"
             name={vegetables}
             onChangeText={(text) => setVegetables(text)}/>
@@ -88,7 +92,7 @@ const CreateRecipeScreen = (props) => {
                backgroundColor: "#FFD700",
                padding: 15,
                borderRadius: 5,
-               width: "90%",
+               width: "100%",
                alignSelf: "center",
                marginTop: 20,
                marginBottom: 20,

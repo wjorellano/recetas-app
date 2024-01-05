@@ -10,6 +10,16 @@ const RecipeScreen = (props) => {
             flex: 1,
             alignContent: "center",
          }}>
+         <Text
+            style={{
+               fontSize: 32,
+               fontWeight: "bold",
+               marginTop: 20,
+               marginLeft: 28,
+               marginBottom: 20,
+            }}>
+            My recipes
+         </Text>
          <ListRecipe
          navigation={props.navigation} />
       </View>
