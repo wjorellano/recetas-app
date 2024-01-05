@@ -36,4 +36,19 @@ los datos tomaran tiempo en cargar ya que la api esta en un plan gratuito de fly
 > Docker
 ```
 
+### Datos de prueba con datos
+
+```
+User:
+  email: "wjorellano@gmail.com"
+  password: "123456"
+
+  email:"prueba@gmail.com"
+  password:"123456"
+```
+o podria crear sus propios usuarios o rectas.
+
+
+
+
 
